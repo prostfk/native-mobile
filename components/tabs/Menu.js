@@ -1,25 +1,32 @@
-import React from 'react';
-import {AsyncStorage} from 'react-native';
-import {ROLE_OWNER} from "../../constants/Roles";
+import React, {Component} from 'react';
+import {AsyncStorage, View} from 'react-native';
+import {ROLE_MANAGER, ROLE_OWNER} from "../../constants/Roles";
 import OwnerMenu from "./OwnerMenu";
+import ManagerMenu from "./ManagerMenu";
+import {LOGIN} from "../../constants/actions/UserActions";
+import connect from "react-redux/es/connect/connect";
 
-export default class Menu extends React.Component {
+class Menu extends Component {
 
-    processRole = () => { //todo add roles menu
-        AsyncStorage.getItem('role').then(role=>{
-            switch (role) {
-                case ROLE_OWNER:
-                    return <OwnerMenu/>;
-                default:
-                    return <></>
-            }
-        });
+    getNav = ()=>{
+        switch (this.props.user.role) {
+            case ROLE_OWNER:
+                return <OwnerMenu/>;
+            case ROLE_MANAGER:
+                return <ManagerMenu/>;
+            default:
+                return <View/>;
+        }
     };
 
     render() {
-        return (
-            this.processRole()
-        );
+        // return <View>{this.state.nav}</View>
+        return this.props.user.role ? this.getNav() : <View/>;
     }
-
 }
+const mapStateToProps = state => {
+    return {
+        user: state.userReducer
+    };
+};
+export default connect(mapStateToProps, null)(Menu);

@@ -9,7 +9,7 @@ import { BottomNavigation } from 'react-native-material-ui';
 import { Actions } from 'react-native-router-flux';
 
 
-class OwnerMenu extends React.Component {
+export default class ManagerMenu extends React.Component {
 
 
     state = {
@@ -25,7 +25,6 @@ class OwnerMenu extends React.Component {
     };
 
     render() {
-        console.log('render nav');
         return (
             <View>
                 <BottomNavigation active={this.state.active} hidden={false} >
@@ -36,26 +35,14 @@ class OwnerMenu extends React.Component {
                         onPress={() => this.changeTab('index')}
                     />
                     <BottomNavigation.Action
-                        key="ownerStocks"
+                        key="managerOrders"
                         icon="domain"
-                        label="Stocks"
-                        onPress={() => this.changeTab('ownerStocks')}
-                    />
-                    <BottomNavigation.Action
-                        key="ownerOrders"
-                        icon="shopping-cart"
                         label="Orders"
-                        onPress={() => this.changeTab('ownerOrders')}
+                        onPress={() => this.changeTab('managerOrders')}
                     />
-                    <BottomNavigation.Action
-                        key="ownerUsers"
-                        icon="people"
-                        label="Users"
-                        onPress={() => this.changeTab('ownerUsers')}
-                    />
+
                 </BottomNavigation>
             </View>
         );
     }
 }
-export default OwnerMenu;

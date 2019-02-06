@@ -24,12 +24,14 @@ export default class OwnerUsersList extends Component {
 
     loadUsers = async () => {
         let token = await AsyncStorage.getItem('token').then(token=>token);
-        fetch(`${SERVER_URL}/api/owner/users`, {headers: {'authorization': token}}).then(response => {
+        console.log(token);
+        fetch(`${SERVER_URL}/api/users?page=1`, {headers: {'authorization': token}}).then(response => {
             return response.json();
         }).then(data => {
-            if (data.error === undefined) {
+            if (data.error) {
+                console.log(data);
                 this.setState({
-                    users: data
+                    users: data.content
                 })
             } else {
                 Alert.alert(data.error);
@@ -47,8 +49,8 @@ export default class OwnerUsersList extends Component {
                     this.state.users.map((user, index) => (
                         <ListItem
                             key={index}
-                            title={`${user.name} ${user.surname}`}
-                            subtitle={this.__processRole(user.role)}
+                            title={`${user.firstName} ${user.secondName}`}
+                            subtitle={this.__processRole(user.userRole)}
                         />
                     ))
                 }

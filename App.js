@@ -11,6 +11,10 @@ import OwnerMenu from "./components/tabs/OwnerMenu";
 import OwnerOrdersView from "./views/Owner/OwnerOrdersView";
 import OwnerStocksList from "./views/Owner/OwnerStocksView";
 import Menu from "./components/tabs/Menu";
+import ManagerOrdersView from "./views/Manager/ManagerOrders";
+import {createStore} from "redux";
+import Provider from "react-redux/es/components/Provider";
+import allReducers from './reducers/AllReducers';
 
 export default class App extends React.Component {
 
@@ -30,24 +34,24 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <View style={{flex: 1}}>
-                <Router>
-                    <Scene key={'root'}>
-                        <Scene key={'index'} component={IndexView} title={"Welcome"} initial/>
-                        <Scene key={'user'} component={UserView} title={'user page'}/>
-                        <Scene key={'auth'} component={AuthView} title={'Auth'}/>
-                        <Scene key={'ownerUsers'} component={OwnerUsersList} title={'List'}/>
-                        <Scene key={'ownerOrders'} component={OwnerOrdersView} title={'List'}/>
-                        <Scene key={'ownerStocks'} component={OwnerStocksList} title={'List'}/>
-                    </Scene>
-                </Router>
-                <Menu/>
-            </View>
+            <Provider store={store}>
+                <View style={{flex: 1}}>
+                    <Router>
+                        <Scene key={'root'}>
+                            <Scene key={'index'} component={IndexView} title={"Welcome"} initial/>
+                            <Scene key={'user'} component={UserView} title={'user page'}/>
+                            <Scene key={'auth'} component={AuthView} title={'Auth'}/>
+                            <Scene key={'ownerUsers'} component={OwnerUsersList} title={'List'}/>
+                            <Scene key={'ownerOrders'} component={OwnerOrdersView} title={'List'}/>
+                            <Scene key={'ownerStocks'} component={OwnerStocksList} title={'List'}/>
+                            <Scene key={'managerOrders'} component={ManagerOrdersView}/>
+                        </Scene>
+                    </Router>
+                    <Menu/>
+                </View>
+            </Provider>
         )
     }
-
-
-
-
-
 };
+
+const store = createStore(allReducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
