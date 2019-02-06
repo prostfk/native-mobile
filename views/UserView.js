@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {AsyncStorage} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import {View, Text} from 'react-native';
+import {LOGOUT} from "../constants/actions/UserActions";
+import connect from "react-redux/es/connect/connect";
 
 
-export default class UserView extends Component {
+class UserView extends Component {
 
     state = {
         message: ''
@@ -19,21 +21,29 @@ export default class UserView extends Component {
         headerTintColor: 'white'
     };
 
-    componentDidMount(){
-        AsyncStorage.getItem('role').then(role=>{
-            this.setState({
-                message: role
-            })
-        })
-    }
 
     render(){
         return <View>
             <Text>
-                Auth user - {this.state.message}
+                Auth user - {this.props.user.role}
             </Text>
         </View>
     }
-
-
 }
+const mapStateToProps = state => {
+    return {
+        user: state.userReducer
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return ({
+        logout: () => {
+            dispatch({
+                type: LOGOUT
+            })
+        }
+    });
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserView);

@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {View, AsyncStorage, Text} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import OwnerMenu from "../components/tabs/OwnerMenu";
+import {LOGIN, LOGOUT} from "../constants/actions/UserActions";
+import connect from "react-redux/es/connect/connect";
+import {Button} from "react-native-elements";
 
-export default class IndexView extends Component {
+class IndexView extends Component {
 
     componentDidMount(){
         this.initUser();
@@ -17,25 +20,35 @@ export default class IndexView extends Component {
         headerTintColor: 'white'
     };
 
-    initUser = async () => {
-        await AsyncStorage.clear();
-        // console.log(res);
-        AsyncStorage.getItem("token").then(token=>{
-            if (!token){
-                Actions.auth();
-            }else{
-                Actions.user();
-            }
-        });
+    initUser = () => {
+        console.log(this.props.user.role);
+        this.props.user.role ? Actions.user() : Actions.auth();
     };
 
     render() {
         return (
             <View>
                 <Text>Lol index</Text>
+                <Button onPress={()=>{this.props.logout(); Actions.auth()}}>Logout</Button>
             </View>
         );
     }
-
-
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.userReducer
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return ({
+        logout: () => {
+            dispatch({
+                type: LOGOUT
+            })
+        }
+    });
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(IndexView);

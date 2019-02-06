@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {View, Alert, AsyncStorage} from 'react-native';
 import {ListItem} from "react-native-elements";
 import {SERVER_URL} from "../config/ServerConfig";
+import {SET_ORDERS} from "../constants/actions/OrderActions";
+import connect from "react-redux/es/connect/connect";
+import {SET_WORKERS} from "../constants/actions/WorkerActions";
 
-export default class OwnerUsersList extends Component {
+class OwnerUsersList extends Component {
 
     state = {
         users: []
@@ -23,16 +26,13 @@ export default class OwnerUsersList extends Component {
     }
 
     loadUsers = async () => {
-        let token = await AsyncStorage.getItem('token').then(token=>token);
-        console.log(token);
+        let token = this.props.user.token;
         fetch(`${SERVER_URL}/api/users?page=1`, {headers: {'authorization': token}}).then(response => {
             return response.json();
         }).then(data => {
-            if (data.error) {
+            if (!data.error) {
                 console.log(data);
-                this.setState({
-                    users: data.content
-                })
+                this.props.setWorkers(data)
             } else {
                 Alert.alert(data.error);
             }
@@ -46,7 +46,7 @@ export default class OwnerUsersList extends Component {
         return (
             <View>
                 {
-                    this.state.users.map((user, index) => (
+                    this.props.workers.map((user, index) => (
                         <ListItem
                             key={index}
                             title={`${user.firstName} ${user.secondName}`}
@@ -63,3 +63,21 @@ export default class OwnerUsersList extends Component {
     }
 
 }
+const mapStateToProps = state => {
+    return {
+        user: state.userReducer,
+        workers: state.workerReducer
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return ({
+        setWorkers: payload => {
+            dispatch({
+                type: SET_WORKERS, payload
+            })
+        }
+    });
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OwnerUsersList);

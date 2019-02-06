@@ -4,8 +4,11 @@ import {ListItem} from "react-native-elements";
 import {SERVER_URL} from "../../config/ServerConfig";
 import CommonUtil from "../../util/CommonUtil";
 import OrdersList from "../../components/lists/OrdersList";
+import {LOGOUT} from "../../constants/actions/UserActions";
+import connect from "react-redux/es/connect/connect";
+import {SET_ORDERS} from "../../constants/actions/OrderActions";
 
-export default class ManagerOrdersView extends Component {
+class ManagerOrdersView extends Component {
 
     state = {
         orders: []
@@ -26,12 +29,12 @@ export default class ManagerOrdersView extends Component {
     }
 
     loadOrders = async () => {
-        let token = await AsyncStorage.getItem('token').then(token => token);
+        let token = this.props.user.token;
         console.log(token);
-        fetch(`${SERVER_URL}/api/manager/orders`, {headers: {'authorization': token}}).then(response => response.json())
+        fetch(`${SERVER_URL}/api/manager/orders?page=1`, {headers: {'authorization': token}}).then(response => response.json())
             .then(data => {
                 if (!data.error) {
-                    this.setState({orders: data})
+                    this.props.setOrders(data);
                 } else {
                     Alert.alert("Error", data.error);
                 }
@@ -44,9 +47,27 @@ export default class ManagerOrdersView extends Component {
     render() {
         return (
             <View>
-                <OrdersList orders={this.state.orders}/>
+                <OrdersList orders={this.props.orders}/>
             </View>
         );
     }
 
 }
+const mapStateToProps = state => {
+    return {
+        user: state.userReducer,
+        orders: state.orderReducer
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return ({
+        setOrders: payload => {
+            dispatch({
+                type: SET_ORDERS, payload
+            })
+        }
+    });
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManagerOrdersView);

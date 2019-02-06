@@ -21,7 +21,7 @@ class AuthView extends Component {
     };
 
     state = {
-        username: 'manager1',
+        username: 'owner1',
         password: 'zxccxz'
     };
 
